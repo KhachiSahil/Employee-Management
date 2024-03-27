@@ -5,6 +5,7 @@ import Sidebar from "./SmallComponent/Dashboard/Sidebar";
 import MainContent from "./SmallComponent/Dashboard/MainComponent";
 import Login from "./Component/Login";
 import Crud from "./Component/Crud";
+import Notadmin from "./Component/Notadmin";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function AppContent() {
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard/employees" element={<Employee />} />
             <Route path="/dashboard/crud" element={<Crud />} />
+            <Route path="/s" element={<Notadmin/>}/> 
           </Routes>
         </>
       )}
