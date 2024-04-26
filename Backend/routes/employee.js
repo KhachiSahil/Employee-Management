@@ -1,38 +1,44 @@
 const express = require("express");
-const {z} = require("zod");
-const jwt  = require("jsonwebtoken");
-const {JWTTOKEN} = require('../config');
-const {Employee} = require("../models/db");
+const { z } = require("zod");
+const jwt = require("jsonwebtoken");
+const { JWTTOKEN } = require('../config');
+const { Employee } = require("../models/db");
+const { authMiddleware } = require('../middlewares/authmiddleware');
+
 const emproute = express.Router();
 
 const schema = z.object({
-    email : z.string.email("This is not an email"),
-    password : z.string()
-})
+    email: z.string().email("Invalid email format"),
+    password: z.string()
+});
 
-emproute.get('/login',async (req,res)=>{
-    const {success,error} = schema.safeParse(req.body);
-    if(!success){
-        res.status(401).json({msg:"Validation error"})
+emproute.post('/login', async (req, res) => {
+    const { success, error } = schema.safeParse(req.body);
+    if (!success) {
+        return res.status(400).json({ error: "Validation error" });
     }
 
-    const userExist = await Employee.findOne({
-        email : req.body.email,
-        password : req.body.password
-    })
-    if(!userExist){
-        res.status(411).json({msg:"User does not exist"})
+    const user = await Employee.findOne({
+        email: req.body.email,
+        password: req.body.password
+    });
+
+    if (!user) {
+        return res.status(404).json({ error: "User not found" });
     }
-    const token = jwt.sign({userId:userExist._id},JWTTOKEN)
-    res.status(200).set('Authorization',`Bearer ${token}`).send('login successfull')
 
-})
+    const token = jwt.sign({ userId: user._id }, JWTTOKEN);
+    res.status(200).header('Authorization', `Bearer ${token}`).json(user);
+});
 
-emproute.post('/submit',(req,res)=>{
-    
-})
+emproute.post('/submit', authMiddleware, async (req, res) => {
+    const { success, enquiries } = req.body;
+    try {
+        await Employee.updateOne({ _id: req.userId }, { success, enquiries });
+        res.status(200).json({ message: "Entries updated successfully" });
+    } catch (err) {
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 
-
-module.exports = {
-    emproute
-}
+module.exports = { emproute };
