@@ -25,8 +25,8 @@ function AppContent() {
         <Login />
       ) : (
         <>
-          <Navbar />
-          <Sidebar />
+            <Navbar />
+            <Sidebar />
           <Routes>
             <Route path="/dashboard" element={<MainContent />} />
             <Route path="/login" element={<Login />} />
