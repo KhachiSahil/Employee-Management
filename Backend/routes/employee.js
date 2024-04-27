@@ -8,7 +8,7 @@ const { authMiddleware } = require('../middlewares/authmiddleware');
 const emproute = express.Router();
 
 const schema = z.object({
-    email: z.string().email("Invalid email format"),
+    username: z.string(),
     password: z.string()
 });
 
@@ -19,7 +19,7 @@ emproute.post('/login', async (req, res) => {
     }
 
     const user = await Employee.findOne({
-        email: req.body.email,
+        username: req.body.username,
         password: req.body.password
     });
 

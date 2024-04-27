@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const { number } = require("zod");
-mongoose.connect();
+mongoose.connect('mongodb+srv://employee_management:hdf7tXVZhnDxOzLp@sahildb.d8gizka.mongodb.net/');
 
 const Employees = new mongoose.Schema({
-    email : {
+    username : {
         type : String,
         required : true,
         unique : true,
@@ -26,7 +26,7 @@ const Employees = new mongoose.Schema({
 })
 
 const Admins  = new mongoose.Schema({
-    email : {
+    username : {
         type : String,
         required : true,
         unique : true,
