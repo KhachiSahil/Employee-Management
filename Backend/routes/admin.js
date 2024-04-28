@@ -76,17 +76,17 @@ admnRoute.get('/bulk', authMiddleware, async (req, res) => {
 admnRoute.delete('/deleteuser', authMiddleware, async (req, res) => {
     const name = req.body.name;
     try {
-      const deletedUser = await Employee.findOneAndDelete({ name });
-      if (deletedUser) {
-        res.status(200).json({ message: `User '${name}' deleted successfully` });
-      } else {
-        res.status(404).json({ error: `User '${name}' not found` });
-      }
+        const deletedUser = await Employee.findOneAndDelete({ name });
+        if (deletedUser) {
+            res.status(200).json({ message: `User '${name}' deleted successfully` });
+        } else {
+            res.status(404).json({ error: `User '${name}' not found` });
+        }
     } catch (error) {
-      console.error('Error deleting user:', error);
-      res.status(500).json({ error: 'Internal server error' });
+        console.error('Error deleting user:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-  });
-  
+});
+
 
 module.exports = { admnRoute };

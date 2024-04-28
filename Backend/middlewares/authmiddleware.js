@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { jwtSecret } = require('../config');
+const {JWTTOKEN} = require('../config');
 
 async function authMiddleware(req, res, next) {
     const header = req.headers.authorization;
@@ -8,7 +8,7 @@ async function authMiddleware(req, res, next) {
     }
     const token = header.split(' ')[1];
     try {
-        const decoded = jwt.verify(token, jwtSecret);
+        const decoded = jwt.verify(token, JWTTOKEN);
         req.userId = decoded.userId;
         next();
     } catch (error) {
