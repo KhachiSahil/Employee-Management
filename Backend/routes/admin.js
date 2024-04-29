@@ -1,11 +1,13 @@
 const express = require("express");
 const { z } = require("zod");
 const jwt = require("jsonwebtoken");
+const cookieParser = require('cookie-parser');
 const { JWTTOKEN } = require('../config');
 const { Admin, Employee } = require("../models/db");
 const { authMiddleware } = require("../middlewares/authmiddleware");
 
 const admnRoute = express.Router();
+admnRoute.use(cookieParser());
 
 const schema = z.object({
     username: z.string(),
@@ -29,7 +31,15 @@ admnRoute.post('/login', async (req, res) => {
         }
 
         const token = jwt.sign({ userId: user._id }, JWTTOKEN);
-        res.status(200).header('Authorization', `Bearer ${token}`).json(user);
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: true,
+            maxAge: 24 * 60 * 60 * 1000
+        });
+
+        res.status(200).json(user);
     } catch (error) {
         console.error("Login error:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -86,6 +96,11 @@ admnRoute.delete('/deleteuser', authMiddleware, async (req, res) => {
         console.error('Error deleting user:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+});
+
+admnRoute.delete('/logout', (req, res) => {
+    res.clearCookie('token');
+    res.json({ message: 'Logout successful' });
 });
 
 

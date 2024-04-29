@@ -1,13 +1,13 @@
 const jwt = require('jsonwebtoken');
-const {JWTTOKEN} = require('../config');
+const { JWTTOKEN } = require('../config');
+
 
 async function authMiddleware(req, res, next) {
-    const header = req.headers.authorization;
-    if (!header || !header.startsWith('Bearer ')) {
-        return res.status(403).json({ "message": "Authorization header not found" });
-    }
-    const token = header.split(' ')[1];
     try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(403).json({ "message": "Authorization cookie not found" });
+        }
         const decoded = jwt.verify(token, JWTTOKEN);
         req.userId = decoded.userId;
         next();

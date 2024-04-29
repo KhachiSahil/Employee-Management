@@ -6,11 +6,15 @@ import MainContent from "./SmallComponent/Dashboard/MainComponent";
 import Login from "./Component/Login";
 import Crud from "./Component/Crud";
 import Notadmin from "./Component/Notadmin";
+import { RecoilRoot,useRecoilValue } from "recoil";
+import { isClient } from "../recoil/atoms";
 
 function App() {
   return (
     <BrowserRouter>
+    <RecoilRoot>
       <AppContent />
+    </RecoilRoot>
     </BrowserRouter>
   );
 }
@@ -18,6 +22,7 @@ function App() {
 function AppContent() {
   const location = useLocation();
   const isLoginPage = location.pathname === '/';
+  const page = useRecoilValue(isClient);
 
   return (
     <>
@@ -26,10 +31,11 @@ function AppContent() {
       ) : (
         <>
             <Navbar />
-            <Sidebar />
+            {page==='admin'?(<Sidebar />):(<></>)}
+
           <Routes>
             <Route path="/dashboard" element={<MainContent />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Login />} />
             <Route path="/dashboard/employees" element={<Employee />} />
             <Route path="/dashboard/crud" element={<Crud />} />
             <Route path="/s" element={<Notadmin/>}/> 
