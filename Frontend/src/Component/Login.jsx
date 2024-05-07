@@ -47,7 +47,8 @@ const Login = () => {
                 } catch (err) {
                   console.log(err)
                 }
-              }else{
+              }
+              if(role=='employee'){
                 setIsClient('employee')
                 try {
                   const response = await axios.post('http://localhost:3000/empmng/employee/login', {
@@ -56,7 +57,6 @@ const Login = () => {
                   },{
                     withCredentials:true
                   })
-                  console.log(response)
                   setEmployeSide(response)
                   navigate('/employee')
                 } catch (err) {

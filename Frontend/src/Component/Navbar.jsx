@@ -17,7 +17,8 @@ const Navbar = () => {
         } catch (err) {
             console.error('Logout error:', err);
         }
-    } else {try{
+    } 
+    if(Client==='employee') {try{
       await axios.delete('http://localhost:3000/empmng/employee/logout',{
         withCredentials:true
       })

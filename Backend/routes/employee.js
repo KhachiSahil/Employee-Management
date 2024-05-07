@@ -13,44 +13,36 @@ const schema = z.object({
     password: z.string()
 });
 
-admnRoute.post('/login', async (req, res) => {
-    try {
-        const { success } = schema.safeParse(req.body);
-        if (!success) {
-            return res.status(400).json({ "msg": "Invalid credentials" });
-        }
-
-        const user = await Admin.findOne({
-            username: req.body.username,
-            password: req.body.password
-        });
-
-        if (!user) {
-            return res.status(404).json({ "msg": "User not found" });
-        }
-
-        // Create a new object without the password field
-        const userDataWithoutPassword = {
-            _id: user._id,
-            username: user.username,
-            enquiries:user.enquiries,
-            success:user.success    
-        };
-
-        const token = jwt.sign({ userId: user._id }, JWTTOKEN);
-
-        res.cookie('token', token, {
-            httpOnly: true,
-            sameSite: 'lax',
-            secure: true,
-            maxAge: 24 * 60 * 60 * 1000
-        });
-
-        res.status(200).json(userDataWithoutPassword);
-    } catch (error) {
-        console.error("Login error:", error);
-        res.status(500).json({ error: "Internal server error" });
+emproute.post('/login', async (req, res) => {
+    const { success, error } = schema.safeParse(req.body);
+    if (!success) {
+        return res.status(400).json({ error: "Validation error" });
     }
+
+    const user = await Employee.findOne({
+        username: req.body.username,
+        password: req.body.password
+    });
+
+    if (!user) {
+        return res.status(404).json({ error: "User not found" });
+    }
+
+    const userDataWithoutPassword = {
+        _id: user._id,
+        username: user.username,
+        enquiries:user.enquiries,
+        success:user.success
+    };
+
+    const token = jwt.sign({ userId: user._id }, JWTTOKEN);
+    res.cookie('token', token, {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000
+    });
+    res.status(200).json(userDataWithoutPassword);
 });
 
 
@@ -64,7 +56,7 @@ emproute.post('/submit', authMiddleware, async (req, res) => {
     }
 });
 
-emproute.post('/logout', (req, res) => {
+emproute.delete('/logout', (req, res) => {
     res.clearCookie('token');
     res.json({ message: 'Logout successful' });
 });
