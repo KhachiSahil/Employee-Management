@@ -1,12 +1,12 @@
-import React from 'react'
+import React from 'react';
 
 function Card() {
   return (
-    <div className='my-3 block max-w-sm p-9 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700'>
-      <h5 className='mb-2 mx-9 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>HI there</h5>
-      <p className='font-normal text-gray-700 dark:text-gray-400'>This month is the hdkjbgaldkjfblejfksvb </p>
+    <div className='my-5 opacity-85 block shadow-custom animate-custom-shadow max-w-sm p-9 text-white bg-gray-700 border border-gray-200 rounded-lg hover:opacity-100 hover:text-gray-900 hover:scale-105 transition-all duration-300 ease-in-out'>
+      <h5 className='mb-2 mx-9 text-2xl font-bold tracking-tight'>HI there</h5>
+      <p className='font-normal'>This month is the hdkjbgaldkjfblejfksvb</p>
     </div>
-  )
+  );
 }
 
-export default Card
+export default Card;

@@ -75,7 +75,8 @@ admnRoute.put('/create', authMiddleware, async (req, res) => {
 
 admnRoute.get('/bulk', authMiddleware, async (req, res) => {
     try {
-        const employees = await Employee.find({});
+        const employees = await Employee.find({}, { password: 0 });
+
         res.status(200).json({ employees });
     } catch (error) {
         console.error("Fetch employees error:", error);
@@ -83,14 +84,15 @@ admnRoute.get('/bulk', authMiddleware, async (req, res) => {
     }
 });
 
+
 admnRoute.delete('/deleteuser', authMiddleware, async (req, res) => {
     const name = req.body.name;
     try {
-        const deletedUser = await Employee.findOneAndDelete({ name });
+        const deletedUser = await Employee.findOneAndDelete({ username:name });
         if (deletedUser) {
             res.status(200).json({ message: `User '${name}' deleted successfully` });
         } else {
-            res.status(404).json({ error: `User '${name}' not found` });
+            res.status(40).json({ error: `User '${name}' not found` });
         }
     } catch (error) {
         console.error('Error deleting user:', error);

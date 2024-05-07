@@ -13,29 +13,46 @@ const schema = z.object({
     password: z.string()
 });
 
-emproute.post('/login', async (req, res) => {
-    const { success, error } = schema.safeParse(req.body);
-    if (!success) {
-        return res.status(400).json({ error: "Validation error" });
-    }
+admnRoute.post('/login', async (req, res) => {
+    try {
+        const { success } = schema.safeParse(req.body);
+        if (!success) {
+            return res.status(400).json({ "msg": "Invalid credentials" });
+        }
 
-    const user = await Employee.findOne({
-        username: req.body.username,
-        password: req.body.password
-    });
+        const user = await Admin.findOne({
+            username: req.body.username,
+            password: req.body.password
+        });
 
-    if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        if (!user) {
+            return res.status(404).json({ "msg": "User not found" });
+        }
+
+        // Create a new object without the password field
+        const userDataWithoutPassword = {
+            _id: user._id,
+            username: user.username,
+            enquiries:user.enquiries,
+            success:user.success    
+        };
+
+        const token = jwt.sign({ userId: user._id }, JWTTOKEN);
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: true,
+            maxAge: 24 * 60 * 60 * 1000
+        });
+
+        res.status(200).json(userDataWithoutPassword);
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
-    const token = jwt.sign({ userId: user._id }, JWTTOKEN);
-    res.cookie('token', token, {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: true,
-        maxAge: 24 * 60 * 60 * 1000
-    });
-    res.status(200).json(user);
 });
+
 
 emproute.post('/submit', authMiddleware, async (req, res) => {
     const { success, enquiries } = req.body;

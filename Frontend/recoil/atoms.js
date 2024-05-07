@@ -15,4 +15,8 @@ export const userDataAtom = atom({
   effects_UNSTABLE: [persistAtom],
 });
 
-
+export const employeeSide = atom({
+  key:'employeeSide',
+  default:10,
+  effects_UNSTABLE:[persistAtom],
+});

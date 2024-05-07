@@ -29,11 +29,11 @@ const Navbar = () => {
 }
 
   return (
-    <nav className="bg-gray-300 border-gray-600 dark:bg-gray-900 fixed w-full top-0 z-100">
+    <nav className="bg-gray-900 opacity-100 border-gray-600  fixed w-full top-0 z-10">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="../../..//412511701_348579924584894_1996260569768132186_n.jpg" className="h-8" alt="Flowbite Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Travel hanGins</span>
+          <span className="self-center text-2xl font-semibold whitespace-nowrap text-white ">Travel hanGins</span>
         </a>
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
           <button type="button"
