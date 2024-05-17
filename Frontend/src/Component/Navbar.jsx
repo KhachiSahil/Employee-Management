@@ -15,7 +15,7 @@ const Navbar = () => {
             })
             navigate('/');
         } catch (err) {
-            console.error('Logout error:', err);
+          alert("Token not available")
         }
     } 
     if(Client==='employee') {try{
@@ -24,7 +24,7 @@ const Navbar = () => {
       })
       navigate('/');
     }catch(err){
-      console.error('Logout error:', err);
+      alert("Token not available")
     }
     }
 }

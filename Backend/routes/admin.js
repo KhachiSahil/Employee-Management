@@ -71,7 +71,7 @@ admnRoute.put('/create', authMiddleware, async (req, res) => {
         console.error("Create user error:", error);
         res.status(500).json({ error: "Internal server error" });
     }
-});
+}); 
 
 admnRoute.get('/bulk', authMiddleware, async (req, res) => {
     try {

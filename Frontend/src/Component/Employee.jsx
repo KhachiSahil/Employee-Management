@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { userDataAtom } from '../../recoil/atoms';
 
 function Employee({ sidebarOpen }) {
-  console.log("navber")
+  
   const userData = useRecoilValue(userDataAtom);
   const employees = userData && userData.employees;
   
@@ -13,20 +13,16 @@ function Employee({ sidebarOpen }) {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    // Update itemsPerPage based on screen size
     const updateItemsPerPage = () => {
       const isSmallScreen = window.innerWidth <= 640;
       setItemsPerPage(isSmallScreen ? 3 : 5);
     };
-
-    // Initial setup
     updateItemsPerPage();
     const resizeListener = window.addEventListener('resize', updateItemsPerPage);
     return () => window.removeEventListener('resize', resizeListener);
   }, []);
 
   useEffect(() => {
-    // Calculate total pages whenever employees change
     const totalPages = Math.ceil((employees?.length || 0) / itemsPerPage);
     setTotalPages(totalPages);
   }, [employees, itemsPerPage]);
@@ -42,7 +38,6 @@ function Employee({ sidebarOpen }) {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, employees?.length || 0);
   const visibleEmployees = employees?.slice(startIndex, endIndex) || [];
-
   return (
     <>
       <div className="relative">
@@ -50,12 +45,12 @@ function Employee({ sidebarOpen }) {
         <div className={`flex flex-col mt-16 md:mt-0 top-0 bg-gray-600 justify-center items-center h-screen py-16 bg-white dark:bg-gray-600 ${sidebarOpen ? 'ml-64' : 'sm:ml-64 z-10'}`} >
           <div className={'max-w-4xl opacity-90 w-full mx-auto px-4 md:mt-16'}>
             {visibleEmployees.map((employee) => (
-              <Card key={employee._id} name={employee.username} entries={employee.entries} success={employee.success} />
+              <Card key={employee._id} name={employee.username} entries={employee.enquiries} success={employee.success} />
             ))}
           </div>
           <div className="flex justify-center mt-4 z-10">
             <button className="bg-blue-500 hover:bg-blue-700 opacity-100 text-white font-bold py-2 px-4 rounded-l" disabled={currentPage === 1} onClick={handlePrevPage}>Previous</button>
-            <span className="mx-2 text-lg font-semibold">{currentPage} / {totalPages}</span>
+            <span className="mx-2 text-lg font-semibold text-white">{currentPage} / {totalPages}</span>
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r" disabled={currentPage === totalPages} onClick={handleNextPage}>Next</button>
           </div>
         </div>

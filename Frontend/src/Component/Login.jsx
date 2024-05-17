@@ -45,7 +45,7 @@ const Login = () => {
                   console.log(response.data)
                   navigate('/dashboard')
                 } catch (err) {
-                  console.log(err)
+                  alert("Connection failed, Try again")
                 }
               }
               if(role=='employee'){
@@ -60,7 +60,7 @@ const Login = () => {
                   setEmployeSide(response)
                   navigate('/employee')
                 } catch (err) {
-                  console.log(err)
+                  alert("Connection failed, Try again")
                 }
               }
             }}>
