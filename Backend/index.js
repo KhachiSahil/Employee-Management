@@ -5,6 +5,7 @@ const app = express();
 app.use(express.json());
 app.use(cors({
     credentials:true,
+    methods:["POST","GET","DELETE","PUT"],
     origin:"http://localhost:5173"
 }));
 
