@@ -1,16 +1,42 @@
-const express = require("express");
-const cors = require("cors");
-const{route} = require('./routes/index')
+// server.js
+const express = require('express');
+const http = require('http');
+const cors = require('cors');
+const { Server } = require('socket.io');
+const { route } = require('./routes/index');
+
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"]
+  }
+});
+
 app.use(express.json());
 app.use(cors({
-    credentials:true,
-    origin:"http://localhost:5173"
+  credentials: true,
+  origin: "http://localhost:5173"
 }));
 
+app.use('/empmng', route);
+app.get('/', (req, res) => {
+  res.json({ "msg": "message sent" });
+});
 
-app.use('/empmng',route);
+io.on('connection', (socket) => {
+  console.log('a user connected');
 
-app.listen(3000,(req,res)=>{
-    console.log("server started succesfully");
-})
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
+  });
+});
+
+server.listen(3000, () => {
+  console.log("server started successfully");
+});
