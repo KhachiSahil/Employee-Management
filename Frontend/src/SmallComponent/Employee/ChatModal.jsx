@@ -1,61 +1,76 @@
-// ChatModal.js
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
+import axios from 'axios';
+import { XIcon } from '@heroicons/react/solid'; // You can use any icon library you prefer
 
-const socket = io('http://localhost:3000');
-
-const ChatModal = ({ isOpen, onClose }) => {
-  const [message, setMessage] = useState('');
+const ChatModal = ({ isOpen, onClose, sender, recipient }) => {
   const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    socket.on('chat message', (msg) => {
-      setMessages((prevMessages) => [...prevMessages, { text: msg, sender: 'Other' }]);
-    });
+    if (isOpen) {
+      fetchMessages();
+    }
+  }, [isOpen]);
 
-    return () => {
-      socket.off('chat message');
-    };
-  }, []);
-
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      setMessages((prevMessages) => [...prevMessages, { text: message, sender: 'You' }]);
-      socket.emit('chat message', message);
-      setMessage('');
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/empmng/message/', {
+        params: { participant1: sender, participant2: recipient }
+      });
+      setMessages(response.data);
+      setError('');
+    } catch (error) {
+      setError('Error fetching messages');
     }
   };
 
-  if (!isOpen) return null;
+  const sendMessage = async () => {
+    try {
+      await axios.post('http://localhost:3000/empmng/message/', {
+        sender,
+        recipient,
+        message: newMessage
+      });
+      setNewMessage('');
+      fetchMessages();
+      setError('');
+    } catch (error) {
+      setError('Error sending message');
+    }
+  };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg w-80 max-h-full flex flex-col">
-        <div className="bg-blue-500 text-white p-4 flex justify-between items-center rounded-t-lg">
-          <h2 className="text-lg font-semibold">Chat</h2>
-          <button onClick={onClose} className="text-xl">&times;</button>
-        </div>
-        <div className="flex-1 p-4 overflow-y-auto">
-          <div className="space-y-2">
+    isOpen && (
+      <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg shadow-lg p-4 max-w-md w-full">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold">Chat with {recipient}</h2>
+            <button onClick={onClose}>
+              <XIcon className="w-6 h-6 text-gray-600 hover:text-gray-900" />
+            </button>
+          </div>
+          <div className="max-h-80 overflow-y-scroll">
             {messages.map((msg, index) => (
-              <div key={index} className={`text-sm ${msg.sender === 'You' ? 'text-right' : 'text-left'}`}>
-                <span className="font-semibold">{msg.sender}: </span>{msg.text}
+              <div key={index} className={`my-2 p-2 rounded-md ${msg.sender === sender ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
+                <strong>{msg.sender}</strong>: {msg.message}
               </div>
             ))}
           </div>
-        </div>
-        <div className="p-4 border-t border-gray-200 flex items-center space-x-2">
-          <input 
+          {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
+          <input
             type="text"
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Type a message..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="Type your message..."
+            className="w-full p-2 border rounded-md"
           />
-          <button onClick={handleSendMessage} className="bg-blue-500 text-white px-3 py-2 rounded-lg">Send</button>
+          <button onClick={sendMessage} className="mt-2 w-full bg-blue-500 text-white p-2 rounded-md">
+            Send
+          </button>
         </div>
       </div>
-    </div>
+    )
   );
 };
 
